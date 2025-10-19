@@ -1,11 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{title}}</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <link rel="icon" type="image/x-icon" href="https://www.setu.ie/favicon.webp">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="description" content="Course Feedback Portal - Discover and explore comprehensive course offerings">
+    <meta name="theme-color" content="#2563eb">
   </head>
   <body>
-    {{{body}}}
+    <!-- Header -->
+    <header class="main-header">
+      <div class="header-container">
+        <!-- Logo and University Name -->
+        <div class="header-brand">
+          <div class="logo">
+              <img src="https://moodle.setu.ie/pluginfile.php/1/core_admin/logocompact/300x300/1759390317/SETU-LOGO%20%281%29.png" alt="SETU logo" class="university-logo" width="150" height="100" />
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="header-nav">
+          <a href="#" class="nav-link">News</a>
+          <a href="#" class="nav-link active">My Home</a>
+          <a href="#" class="nav-link">Calendar</a>
+        </nav>
+
+        <!-- User Controls -->
+        <div class="header-controls">
+          <!-- Notifications -->
+          <div class="control-item notification-bell">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span class="notification-badge">17</span>
+          </div>
+
+          <!-- Messages -->
+          <div class="control-item">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </div>
+
+          <!-- User Profile -->
+          <div class="user-profile">
+            <div class="user-avatar">HL</div>
+            <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6,9 12,15 18,9"></polyline>
+            </svg>
+          </div>
+
+          <!-- Separator -->
+          <div class="control-separator"></div>
+
+          <!-- Edit Mode Toggle -->
+          <div class="edit-mode-control">
+            <span class="edit-mode-label">Edit mode</span>
+            <div class="toggle-switch">
+              <input type="checkbox" id="edit-mode-toggle" class="toggle-input">
+              <label for="edit-mode-toggle" class="toggle-label">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      {{{body}}}
+    </main>
   </body>
 </html>
