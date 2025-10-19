@@ -32,9 +32,3 @@ Thumbs.db
 
 # Coverage
 coverage/
-
-# Others
-public/images/
-public/javascripts/
-public/stylesheets/
-
