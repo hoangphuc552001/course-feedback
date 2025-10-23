@@ -50,6 +50,11 @@ router.get('/verify', function(req, res, next) {
     res.render('verify', { title: 'Verify Email - Course Feedback Portal' });
 });
 
+router.get('/health', (req, res) => {
+  res.status(200).json({ ok: true });
+});
+
+
 router.get('/whoami', async (req, res) => {
   try {
     const data = await fetchInstanceIdentity();
