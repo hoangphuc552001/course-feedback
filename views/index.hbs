@@ -746,6 +746,19 @@
 </style>
 
 <script>
+  // Check if user is logged in, redirect to login if not
+  (function checkAuth() {
+    const accessToken = localStorage.getItem('accessToken');
+    const idToken = localStorage.getItem('idToken');
+    
+    // If no tokens, redirect to login page
+    if (!accessToken || !idToken) {
+      console.log('User not authenticated, redirecting to login...');
+      window.location.href = '/login';
+      return;
+    }
+  })();
+
   (function () {
     const grid = document.getElementById('courseGrid');
     const search = document.getElementById('search');

@@ -11,71 +11,204 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <meta name="description" content="Course Feedback Portal - Discover and explore comprehensive course offerings">
     <meta name="theme-color" content="#2563eb">
+    <style>
+      .navbar {
+        background: white;
+        box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+      
+      .navbar-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .navbar-brand {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #2563eb;
+        text-decoration: none;
+      }
+      
+      .navbar-menu {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+      
+      .navbar-btn {
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.875rem;
+      }
+      
+      .navbar-btn-primary {
+        background: #2563eb;
+        color: white;
+      }
+      
+      .navbar-btn-primary:hover {
+        background: #1d4ed8;
+      }
+      
+      .navbar-btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+      }
+      
+      .navbar-btn-secondary:hover {
+        background: #e5e7eb;
+      }
+      
+      .navbar-btn-logout {
+        background: #fee2e2;
+        color: #dc2626;
+      }
+      
+      .navbar-btn-logout:hover {
+        background: #fecaca;
+      }
+      
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 1rem;
+        background: #f0f9ff;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        color: #1e40af;
+      }
+      
+      .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #2563eb;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.875rem;
+      }
+    </style>
   </head>
   <body>
-    <!-- Header -->
-    <header class="main-header">
-      <div class="header-container">
-        <!-- Logo and University Name -->
-        <div class="header-brand">
-          <div class="logo">
-              <img src="https://moodle.setu.ie/pluginfile.php/1/core_admin/logocompact/300x300/1759390317/SETU-LOGO%20%281%29.png" alt="SETU logo" class="university-logo" width="150" height="100" />
+    <nav class="navbar">
+      <div class="navbar-container">
+        <a href="/" class="navbar-brand">Course Feedback</a>
+        <div class="navbar-menu">
+          <div id="auth-buttons-logged-out" style="display: none;">
+            <a href="/login" class="navbar-btn navbar-btn-secondary">Login</a>
+            <a href="/signup" class="navbar-btn navbar-btn-primary">Sign Up</a>
           </div>
-        </div>
-
-        <!-- Navigation -->
-        <nav class="header-nav">
-          <a href="#" class="nav-link">News</a>
-          <a href="#" class="nav-link active">My Home</a>
-          <a href="#" class="nav-link">Calendar</a>
-        </nav>
-
-        <!-- User Controls -->
-        <div class="header-controls">
-          <!-- Notifications -->
-          <div class="control-item notification-bell">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-            </svg>
-            <span class="notification-badge">17</span>
-          </div>
-
-          <!-- Messages -->
-          <div class="control-item">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
-          </div>
-
-          <!-- User Profile -->
-          <div class="user-profile">
-            <div class="user-avatar">HL</div>
-            <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="6,9 12,15 18,9"></polyline>
-            </svg>
-          </div>
-
-          <!-- Separator -->
-          <div class="control-separator"></div>
-
-          <!-- Edit Mode Toggle -->
-          <div class="edit-mode-control">
-            <span class="edit-mode-label">Edit mode</span>
-            <div class="toggle-switch">
-              <input type="checkbox" id="edit-mode-toggle" class="toggle-input">
-              <label for="edit-mode-toggle" class="toggle-label">
-                <span class="toggle-slider"></span>
-              </label>
+          <div id="auth-buttons-logged-in" style="display: none;">
+            <div class="user-info">
+              <div class="user-avatar" id="user-avatar"></div>
+              <span id="user-email"></span>
             </div>
+            <button id="logout-btn" class="navbar-btn navbar-btn-logout">Logout</button>
           </div>
         </div>
       </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="main-content">
-      {{{body}}}
-    </main>
+    </nav>
+    
+    {{{body}}}
+    
+    <script>
+      // Check authentication state and update navbar
+      function updateNavbar() {
+        const accessToken = localStorage.getItem('accessToken');
+        const idToken = localStorage.getItem('idToken');
+        const loggedOutButtons = document.getElementById('auth-buttons-logged-out');
+        const loggedInButtons = document.getElementById('auth-buttons-logged-in');
+        
+        if (accessToken && idToken) {
+          // User is logged in
+          loggedOutButtons.style.display = 'none';
+          loggedInButtons.style.display = 'flex';
+          loggedInButtons.style.gap = '1rem';
+          loggedInButtons.style.alignItems = 'center';
+          
+          // Get username from localStorage
+          const username = localStorage.getItem('username') || 'User';
+          const userEmailEl = document.getElementById('user-email');
+          const userAvatarEl = document.getElementById('user-avatar');
+          
+          if (userEmailEl) {
+            userEmailEl.textContent = username;
+          }
+          
+          if (userAvatarEl) {
+            userAvatarEl.textContent = username.charAt(0).toUpperCase();
+          }
+        } else {
+          // User is not logged in
+          loggedOutButtons.style.display = 'flex';
+          loggedOutButtons.style.gap = '1rem';
+          loggedInButtons.style.display = 'none';
+        }
+      }
+      
+      // Handle logout
+      function handleLogout() {
+        const accessToken = localStorage.getItem('accessToken');
+        
+        if (accessToken) {
+          // Call logout endpoint
+          fetch('/auth/logout', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + accessToken
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log('Logout response:', data);
+          })
+          .catch(error => {
+            console.error('Logout error:', error);
+          })
+          .finally(() => {
+            // Clear localStorage regardless of server response
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('idToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('username');
+            
+            // Redirect to home page
+            window.location.href = '/';
+          });
+        } else {
+          // No token, just clear everything and redirect
+          localStorage.clear();
+          window.location.href = '/';
+        }
+      }
+      
+      // Initialize navbar when DOM loads
+      document.addEventListener('DOMContentLoaded', () => {
+        updateNavbar();
+        
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+          logoutBtn.addEventListener('click', handleLogout);
+        }
+      });
+    </script>
   </body>
 </html>

@@ -37,6 +37,15 @@ router.get('/health', function(req, res, next) {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Authentication pages
+router.get('/login', function(req, res, next) {
+    res.render('login', { title: 'Login - Course Feedback Portal' });
+});
+
+router.get('/signup', function(req, res, next) {
+    res.render('signup', { title: 'Sign Up - Course Feedback Portal' });
+});
+
 router.get('/whoami', async (req, res) => {
   try {
     const data = await fetchInstanceIdentity();
