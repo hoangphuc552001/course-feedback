@@ -46,6 +46,10 @@ router.get('/signup', function(req, res, next) {
     res.render('signup', { title: 'Sign Up - Course Feedback Portal' });
 });
 
+router.get('/verify', function(req, res, next) {
+    res.render('verify', { title: 'Verify Email - Course Feedback Portal' });
+});
+
 router.get('/whoami', async (req, res) => {
   try {
     const data = await fetchInstanceIdentity();

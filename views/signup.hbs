@@ -186,12 +186,12 @@
                     const result = await response.json();
 
                     if (result.success) {
-                        this.showMessage('Account created successfully! Redirecting to login...', 'success');
+                        this.showMessage('Account created successfully! Please check your email for verification code.', 'success');
                         
-                        // Redirect to login page after a delay
+                        // Redirect to verification page after a delay
                         setTimeout(() => {
-                            window.location.href = '/login';
-                        }, 1500);
+                            window.location.href = `/verify?username=${encodeURIComponent(username)}`;
+                        }, 2000);
                     } else {
                         this.showMessage(result.error || 'Signup failed', 'error');
                     }

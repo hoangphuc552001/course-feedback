@@ -76,6 +76,84 @@ router.post('/signup', async (req, res) => {
 });
 
 /**
+ * @route POST /auth/verify-email
+ * @desc Verify user email with confirmation code
+ * @access Public
+ */
+router.post('/verify-email', async (req, res) => {
+  try {
+    const { username, code } = req.body;
+
+    // Validate required fields
+    if (!username || !code) {
+      return res.status(400).json({
+        success: false,
+        error: 'Username and verification code are required'
+      });
+    }
+
+    const result = await authService.confirmSignUp(username, code);
+    
+    if (result.success) {
+      res.json({
+        success: true,
+        message: result.message
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        error: result.error
+      });
+    }
+  } catch (error) {
+    console.error('Email verification error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error'
+    });
+  }
+});
+
+/**
+ * @route POST /auth/resend-verification
+ * @desc Resend verification code
+ * @access Public
+ */
+router.post('/resend-verification', async (req, res) => {
+  try {
+    const { username } = req.body;
+
+    if (!username) {
+      return res.status(400).json({
+        success: false,
+        error: 'Username is required'
+      });
+    }
+
+    const result = await authService.resendConfirmationCode(username);
+    
+    if (result.success) {
+      res.json({
+        success: true,
+        message: 'Verification code resent successfully',
+        codeDeliveryDetails: result.codeDeliveryDetails
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        error: result.error
+      });
+    }
+  } catch (error) {
+    console.error('Resend verification error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error'
+    });
+  }
+});
+
+/**
  * @route POST /auth/signin
  * @desc Sign in user
  * @access Public

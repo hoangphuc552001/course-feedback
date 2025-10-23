@@ -64,6 +64,72 @@ class AuthService {
   }
 
   /**
+   * Confirm user sign up with verification code
+   * @param {string} username - User's username
+   * @param {string} code - Verification code
+   * @returns {Promise<Object>} - Confirmation result
+   */
+  async confirmSignUp(username, code) {
+    try {
+      const params = {
+        ClientId: cognitoConfig.ClientId,
+        Username: username,
+        ConfirmationCode: code
+      };
+
+      // Add SECRET_HASH if client secret is configured
+      const secretHash = this.calculateSecretHash(username);
+      if (secretHash) {
+        params.SecretHash = secretHash;
+      }
+
+      await cognitoISP.confirmSignUp(params).promise();
+      return {
+        success: true,
+        message: 'Email verified successfully'
+      };
+    } catch (error) {
+      console.error('Confirm sign up error:', error);
+      return {
+        success: false,
+        error: error.message || 'Email verification failed'
+      };
+    }
+  }
+
+  /**
+   * Resend verification code
+   * @param {string} username - User's username
+   * @returns {Promise<Object>} - Resend result
+   */
+  async resendConfirmationCode(username) {
+    try {
+      const params = {
+        ClientId: cognitoConfig.ClientId,
+        Username: username
+      };
+
+      // Add SECRET_HASH if client secret is configured
+      const secretHash = this.calculateSecretHash(username);
+      if (secretHash) {
+        params.SecretHash = secretHash;
+      }
+
+      const result = await cognitoISP.resendConfirmationCode(params).promise();
+      return {
+        success: true,
+        codeDeliveryDetails: result.CodeDeliveryDetails
+      };
+    } catch (error) {
+      console.error('Resend confirmation code error:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to resend verification code'
+      };
+    }
+  }
+
+  /**
    * Sign in user
    * @param {string} username - User's username
    * @param {string} password - User's password
