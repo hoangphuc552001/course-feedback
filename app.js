@@ -10,6 +10,7 @@ var session = require('express-session');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
+var coursesRouter = require('./routes/courses');
 const { initializeOIDCClient, getOIDCClient } = require('./utils/cognito-config');
 
 var app = express();
@@ -51,6 +52,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
+app.use('/api/courses', coursesRouter);
 
 // OIDC Callback Route
 app.get('/callback', async (req, res) => {

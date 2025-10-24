@@ -29,6 +29,14 @@
       </div>
         
         <div class="controls-group">
+          <button id="add-course-btn" class="add-course-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Add Course
+          </button>
+          
           <div class="select-wrapper">
             <select id="sort" class="select-input">
               <option value="name-asc">Sort Name (A-Z)</option>
@@ -141,6 +149,85 @@
     </div>
   {{/if}}
 {{/if}}
+
+<!-- Add Course Modal -->
+<div id="add-course-modal" class="modal">
+  <div class="modal-overlay" id="modal-overlay"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">Add New Course</h2>
+      <button class="modal-close" id="modal-close" aria-label="Close modal">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    
+    <form id="add-course-form" class="modal-form">
+      <div class="form-group">
+        <label for="course-name" class="form-label">Course Name *</label>
+        <input 
+          type="text" 
+          id="course-name" 
+          name="name" 
+          class="form-input" 
+          placeholder="e.g., Cloud Architecture" 
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="course-code" class="form-label">Course Code *</label>
+        <input 
+          type="text" 
+          id="course-code" 
+          name="code" 
+          class="form-input" 
+          placeholder="e.g., CS301" 
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="course-department" class="form-label">Department *</label>
+        <input 
+          type="text" 
+          id="course-department" 
+          name="department" 
+          class="form-input" 
+          placeholder="e.g., Computer Science" 
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="course-image" class="form-label">Image URL</label>
+        <input 
+          type="url" 
+          id="course-image" 
+          name="image" 
+          class="form-input" 
+          placeholder="https://example.com/image.jpg"
+        />
+      </div>
+
+      <div id="form-message" class="form-message"></div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="cancel-btn">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="submit-btn">
+          <span class="btn-text">Create Course</span>
+          <span class="btn-loader" style="display: none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+            </svg>
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
 
 <style>
   /* Modern Design System */
@@ -422,6 +509,32 @@
     box-shadow: var(--shadow-sm);
   }
 
+  /* Add Course Button */
+  .add-course-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-5);
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-md);
+  }
+
+  .add-course-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .add-course-btn:active {
+    transform: translateY(0);
+  }
+
   /* Courses Section */
   .courses-section {
     max-width: 1200px;
@@ -680,6 +793,208 @@
     margin: 0;
   }
 
+  /* Modal Styles */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-content {
+    position: relative;
+    background: white;
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-xl);
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    z-index: 1001;
+    animation: slideUp 0.3s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-6);
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  .modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin: 0;
+  }
+
+  .modal-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: var(--gray-100);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--gray-600);
+  }
+
+  .modal-close:hover {
+    background: var(--gray-200);
+    color: var(--gray-900);
+  }
+
+  .modal-form {
+    padding: var(--space-6);
+  }
+
+  .form-group {
+    margin-bottom: var(--space-5);
+  }
+
+  .form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: var(--space-2);
+  }
+
+  .form-input {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    font-size: 1rem;
+    font-family: var(--font-sans);
+    transition: var(--transition);
+    background: var(--gray-50);
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    background: white;
+    box-shadow: 0 0 0 3px var(--primary-100);
+  }
+
+  .form-message {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-lg);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: var(--space-4);
+    display: none;
+  }
+
+  .form-message.success {
+    display: block;
+    background: var(--success-50);
+    color: var(--success-600);
+    border: 1px solid var(--success-500);
+  }
+
+  .form-message.error {
+    display: block;
+    background: var(--error-50);
+    color: var(--error-600);
+    border: 1px solid var(--error-500);
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: var(--space-3);
+    justify-content: flex-end;
+    margin-top: var(--space-6);
+  }
+
+  .btn {
+    padding: var(--space-3) var(--space-6);
+    border-radius: var(--radius-lg);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+    color: white;
+    box-shadow: var(--shadow-md);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .btn-secondary {
+    background: var(--gray-100);
+    color: var(--gray-700);
+  }
+
+  .btn-secondary:hover {
+    background: var(--gray-200);
+  }
+
+  .btn-loader {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
   /* Responsive Design */
   @media (max-width: 768px) {
     .hero-title {
@@ -857,5 +1172,117 @@
       .course-card:nth-child(6) { animation-delay: 0.6s; }
     `;
     document.head.appendChild(style);
+  })();
+
+  // Modal functionality
+  (function() {
+    const modal = document.getElementById('add-course-modal');
+    const addBtn = document.getElementById('add-course-btn');
+    const closeBtn = document.getElementById('modal-close');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const overlay = document.getElementById('modal-overlay');
+    const form = document.getElementById('add-course-form');
+    const formMessage = document.getElementById('form-message');
+    const submitBtn = document.getElementById('submit-btn');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const btnLoader = submitBtn.querySelector('.btn-loader');
+
+    // Open modal
+    function openModal() {
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    // Close modal
+    function closeModal() {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+      form.reset();
+      formMessage.className = 'form-message';
+      formMessage.textContent = '';
+    }
+
+    // Show message
+    function showMessage(message, type) {
+      formMessage.textContent = message;
+      formMessage.className = `form-message ${type}`;
+    }
+
+    // Set loading state
+    function setLoading(loading) {
+      submitBtn.disabled = loading;
+      btnText.style.display = loading ? 'none' : 'inline';
+      btnLoader.style.display = loading ? 'inline' : 'none';
+    }
+
+    // Event listeners
+    if (addBtn) {
+      addBtn.addEventListener('click', openModal);
+    }
+    
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeModal);
+    }
+    
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', closeModal);
+    }
+    
+    if (overlay) {
+      overlay.addEventListener('click', closeModal);
+    }
+
+    // Handle form submission
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = {
+          name: document.getElementById('course-name').value,
+          code: document.getElementById('course-code').value,
+          department: document.getElementById('course-department').value,
+          image: document.getElementById('course-image').value || '/images/course-placeholder.png'
+        };
+
+        setLoading(true);
+        showMessage('', '');
+
+        try {
+          const accessToken = localStorage.getItem('accessToken');
+          
+          const response = await fetch('/api/courses', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${accessToken}`
+            },
+            body: JSON.stringify(formData)
+          });
+
+          const data = await response.json();
+
+          if (response.ok && data.success) {
+            showMessage('Course created successfully! Refreshing page...', 'success');
+            setTimeout(() => {
+              window.location.reload();
+            }, 1500);
+          } else {
+            showMessage(data.error || 'Failed to create course', 'error');
+            setLoading(false);
+          }
+        } catch (error) {
+          console.error('Error creating course:', error);
+          showMessage('An error occurred. Please try again.', 'error');
+          setLoading(false);
+        }
+      });
+    }
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('active')) {
+        closeModal();
+      }
+    });
   })();
 </script>

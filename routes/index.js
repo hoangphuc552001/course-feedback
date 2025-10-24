@@ -23,7 +23,7 @@ const pool = new Pool(poolConfig);
 
 router.get('/', async function(req, res, next) {
   try {
-    const query = 'SELECT id, name, code, department,image FROM courses ORDER BY name';
+    const query = 'SELECT id, name, code, department, image FROM courses ORDER BY name';
     const { rows } = await pool.query(query);
 
     res.render('index', { title: 'School Courses', courses: rows });
