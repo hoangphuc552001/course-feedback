@@ -112,7 +112,7 @@
               </div>
           </div>
 
-          <div class="card-footer">
+            <div class="card-footer">
               <div class="course-stats">
                 <div class="stat">
                   <span class="stat-label">Progress</span>
@@ -123,11 +123,17 @@
                   <span class="stat-value status-active">Active</span>
                 </div>
               </div>
-              <button class="card-action" aria-label="View course details">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M9 18l6-6-6-6"/>
-                </svg>
-              </button>
+              <div class="card-actions">
+                <button class="card-action danger delete-course-btn" data-course-id="{{this.id}}" data-course-name="{{this.name}}" aria-label="Delete course">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                    <path d="M10 11v6"/>
+                    <path d="M14 11v6"/>
+                    <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
+                  </svg>
+                </button>
+              </div>
             </div>
         </article>
       {{/each}}
@@ -735,6 +741,20 @@
     transform: translateX(2px);
   }
 
+  .card-actions {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  .card-action.danger {
+    background: var(--error-50);
+    color: var(--error-600);
+  }
+
+  .card-action.danger:hover {
+    background: #fde2e2;
+  }
+
   /* List View */
   .list .courses-grid {
     display: flex;
@@ -1080,6 +1100,7 @@
     const sort = document.getElementById('sort');
     const btnCard = document.getElementById('view-card');
     const btnList = document.getElementById('view-list');
+    const CONFIRM_DELETE_MESSAGE = 'Are you sure you want to delete this course? This action cannot be undone.';
 
     if (!grid || !search || !sort || !btnCard || !btnList) {
       console.warn('Required elements not found');
@@ -1172,6 +1193,53 @@
       .course-card:nth-child(6) { animation-delay: 0.6s; }
     `;
     document.head.appendChild(style);
+
+    // Delete course handler (event delegation)
+    grid.addEventListener('click', async (e) => {
+      const deleteBtn = e.target.closest('.delete-course-btn');
+      if (!deleteBtn) return;
+
+      const courseId = deleteBtn.getAttribute('data-course-id');
+      const courseName = deleteBtn.getAttribute('data-course-name');
+      if (!courseId) return;
+
+      const confirmMsg = `${CONFIRM_DELETE_MESSAGE}\n\nCourse: ${courseName || ''}`.trim();
+      const ok = window.confirm(confirmMsg);
+      if (!ok) return;
+
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+          alert('You must be logged in to delete a course.');
+          return;
+        }
+
+        // Optimistic UI: fade out card
+        const card = deleteBtn.closest('.course-card');
+        if (card) {
+          card.style.opacity = '0.5';
+        }
+
+        const resp = await fetch(`/api/courses/${courseId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+          }
+        });
+
+        if (resp.ok) {
+          // Remove card from DOM
+          if (card) card.remove();
+        } else {
+          // Revert fade if failed
+          if (card) card.style.opacity = '';
+          const data = await resp.json().catch(() => ({}));
+          alert(data.error || 'Failed to delete course');
+        }
+      } catch (err) {
+        alert('An error occurred while deleting the course.');
+      }
+    });
   })();
 
   // Modal functionality
